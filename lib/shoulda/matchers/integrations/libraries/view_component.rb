@@ -12,12 +12,6 @@ module Shoulda
 
           def integrate_with(test_framework)
             test_framework.include(matchers_module, type: :component)
-
-            #include_into(::ViewComponent::TestCase, matchers_module) do
-            #  def subject # rubocop:disable Lint/NestedMethodDefinition
-            #    @component
-            #  end
-            #end
           end
 
           private

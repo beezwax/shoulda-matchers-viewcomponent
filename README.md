@@ -35,7 +35,7 @@ end
 
 ## Usage
 
-At the moment only one matcher exists, `have_collection_parameter`, which
+At the moment only one matcher exists, `use_collection_parameter`, which
 checks that a collection parameter was set for the component through
 `with_collection_parameter`. E.g.:
 
@@ -52,7 +52,7 @@ end
 # spec/components/product_component_spec.rb
 RSpec.describe ProductComponent, type: :component do
   it do
-    expect(described_class).to have_collection_parameter(:product)
+    expect(described_class).to use_collection_parameter(:product)
       .with_counter   # Optional, checks for product_counter: param
       .with_iteration # Optional, checks for product_iteration: param
   end

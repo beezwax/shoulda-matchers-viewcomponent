@@ -3,31 +3,34 @@
 module Shoulda
   module Matchers
     module ViewComponent
-      # The `have_readonly_attribute` matcher tests usage of the
-      # `attr_readonly` macro.
+      # The `use_collection_parameter` matcher tests usage of the
+      # `with_collection_parameter` macro.
       #
-      #     class User < ActiveRecord::Base
-      #       attr_readonly :password
+      #     class ProductComponent < ViewComponent::Base
+      #       with_collection_parameter :product
+      #
+      #       def initialize(product:)
+      #       end
       #     end
       #
       #     # RSpec
-      #     RSpec.describe User, type: :model do
-      #       it { should have_readonly_attribute(:password) }
+      #     RSpec.describe ProductComponent, type: :component do
+      #       it { expect(described_class).to use_collection_parameter(:product) }
       #     end
       #
       #     # Minitest (Shoulda)
-      #     class UserTest < ActiveSupport::TestCase
-      #       should have_readonly_attribute(:password)
+      #     class ProductComponentTest < ActiveSupport::TestCase
+      #       should use_collection_parameter(:product)
       #     end
       #
       # @return [HaveReadonlyAttributeMatcher]
       #
-      def have_collection_parameter(value)
-        HaveCollectionParameter.new(value)
+      def use_collection_parameter(value)
+        UseCollectionParameter.new(value)
       end
 
       # @private
-      class HaveCollectionParameter
+      class UseCollectionParameter
         def initialize(attribute)
           @attribute = attribute.to_s
         end
@@ -40,10 +43,31 @@ module Shoulda
             requires_counter? && requires_iteration?
         end
 
+        def description
+          description = "use collection parameter " \
+            ":#{@attribute} with matching #initialize(#{@attribute}:"
+
+          if @with_counter
+            description += ", #{@attribute}_counter:"
+          end
+
+          if @with_iteration
+            description += ", #{@attribute}_iteration:"
+          end
+
+          description += '[, ...]) keyword argument'
+
+          description += 's' if @with_counter || @with_iteration
+
+          description
+        end
+
         def failure_message
-          "Expected #{@subject} to have collection parameter " \
-            ":#{@attribute} with matching #initialize(#{@attribute}:[, ...]) " \
-            'keyword argument'
+          "expected #{@subject} to #{description}"
+        end
+
+        def failure_message_when_negated
+          "expected #{@subject} not to #{description}"
         end
 
         def with_counter
@@ -59,12 +83,10 @@ module Shoulda
         private
 
         def collection_parameter_matches?
-          puts "collection_parameter_matches?"
           @subject.collection_parameter.to_s == @attribute
         end
 
         def has_matching_initialize_parameter?
-          puts "has_matching_initialize_parameter?"
           has_keyword_parameter?(@attribute)
         end
 
