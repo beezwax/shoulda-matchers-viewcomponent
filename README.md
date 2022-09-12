@@ -24,6 +24,8 @@ And run `bundle`.
 Then configure Shoulda to use the ViewComponent matchers:
 
 ```ruby
+require 'shoulda/matchers/view_component'
+
 # If using RSpec, this would typically go in spec/rails_helper.rb
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
